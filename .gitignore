@@ -1,0 +1,13 @@
+# Ignorar chaves e credenciais locais
+.env
+
+# Ignorar pastas de cache do Python
+__pycache__/
+*.pyc
+
+# Ignorar o banco de dados local do Qdrant (o pipeline recria ele)
+qdrant_db/
+
+# Ignorar arquivos temporários do sistema
+.DS_Store
+Thumbs.db

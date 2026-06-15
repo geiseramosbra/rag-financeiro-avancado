@@ -1,6 +1,6 @@
 streamlit
 cohere
-qdrant-client
+qdrant-client>=1.10.0
 groq
 pymupdf
 python-dotenv

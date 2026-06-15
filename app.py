@@ -7,8 +7,14 @@ load_dotenv()
 
 def buscar_contexto(pergunta):
     cohere_client = CohereClient(api_key=os.getenv("COHERE_API_KEY"))
-    # Conexão via Nuvem
-    qdrant_client = QdrantClient(url=os.getenv("QDRANT_URL"), api_key=os.getenv("QDRANT_API_KEY"))
+    
+    # Conexão via Nuvem ajustada para maior estabilidade
+    qdrant_client = QdrantClient(
+        url=os.getenv("QDRANT_URL"), 
+        api_key=os.getenv("QDRANT_API_KEY"),
+        prefer_grpc=False, 
+        check_compatibility=False
+    )
     
     vetor = cohere_client.embed(texts=[pergunta], model="embed-multilingual-v3.0", input_type="search_query").embeddings[0]
     

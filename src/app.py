@@ -13,7 +13,12 @@ def buscar_contexto(pergunta_usuario):
     
     # Inicializa os clientes aqui dentro para garantir que estejam disponíveis no Streamlit
     cohere_client = CohereClient(api_key=os.getenv("COHERE_API_KEY"))
-    qdrant_client = QdrantClient(path="C:/Users/geise/Downloads/rag-financeiro-avancado/qdrant_db")
+    
+    # CORREÇÃO LOCALHOST: Mapeia dinamicamente a pasta raiz do projeto de forma portável
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    path_qdrant = os.path.join(base_dir, "qdrant_db")
+    
+    qdrant_client = QdrantClient(path=path_qdrant)
     
     # 1. Gera o embedding da pergunta
     response = cohere_client.embed(

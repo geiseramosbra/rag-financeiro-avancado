@@ -63,24 +63,27 @@ def obter_embeddings_reais(lista_de_textos):
 def executar_pipeline_ingestao():
     print("--- Iniciando Pipeline RAG Avançado (Layout-Aware Chunking) ---")
     
-    pdf_path = os.path.join("data", "apple_10k.pdf")
+    # CORREÇÃO LOCALHOST: Mapeia dinamicamente a pasta raiz do projeto de forma portável
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    pdf_path = os.path.join(base_dir, "data", "apple_10k.pdf")
+    
     if not os.path.exists(pdf_path):
         print(f"Erro: O arquivo {pdf_path} não foi encontrado.")
         return
-
+        
     print("\n[Passo 1 e 2] Extraindo e dividindo texto estruturado por layout...")
     chunks_com_metadados = extrair_chunks_por_layout(pdf_path)
     print(f"Sucesso: Criados {len(chunks_com_metadados)} chunks inteligentes com base nos blocos do PDF.")
-
+    
     # Extrai apenas os textos para enviar para a API de Embeddings
     lista_textos = [c["texto"] for c in chunks_com_metadados]
-
     print("\n[Passo 3] Gerando Embeddings Reais via API da Cohere...")
     vetores = obter_embeddings_reais(lista_textos)
     print(f"Sucesso: {len(vetores)} vetores gerados com precisão semântica.")
-
+    
     print("\n[Passo 4] Enviando vetores e metadados para o Qdrant...")
-    path_qdrant = "C:/Users/geise/Downloads/rag-financeiro-avancado/qdrant_db"
+    # CORREÇÃO LOCALHOST: Banco salvo na raiz do projeto usando caminho relativo dinâmico
+    path_qdrant = os.path.join(base_dir, "qdrant_db")
     nome_colecao = "finance_docs_cohere"
     
     client = QdrantClient(path=path_qdrant)
@@ -93,7 +96,7 @@ def executar_pipeline_ingestao():
         collection_name=nome_colecao,
         vectors_config=VectorParams(size=1024, distance=Distance.COSINE)
     )
-
+    
     points = []
     for idx, (chunk_info, vetor) in enumerate(zip(chunks_com_metadados, vetores)):
         points.append(
@@ -106,7 +109,7 @@ def executar_pipeline_ingestao():
                 }
             )
         )
-
+        
     client.upsert(
         collection_name=nome_colecao,
         points=points

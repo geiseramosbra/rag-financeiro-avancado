@@ -1,0 +1,6 @@
+streamlit
+cohere
+qdrant-client
+groq
+pymupdf
+python-dotenv
